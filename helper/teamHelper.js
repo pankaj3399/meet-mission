@@ -1,4 +1,10 @@
 function buildGroupsAndRounds(allTeams, allBars = []) {
+  console.log("All Teams: ", allTeams);
+  console.log("=========================");
+  console.log("=========================");
+  console.log("All Bars: ", allBars);
+  console.log("=========================");
+  console.log("=========================");
   const groupsAndRounds = {};
   const notes = [];
   const cancelledByRound = {};

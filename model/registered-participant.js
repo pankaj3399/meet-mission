@@ -13,7 +13,7 @@ const RegisteredParticipantSchema = new Schema({
   email: { type: String, required: true },
   status: {
     type: String,
-    enum: ['process', 'registered', 'canceled'],
+    enum: ['process','waitlist','registered', 'canceled'],
     default: 'registered'
   },
   is_main_user: { type: Boolean, default: null },

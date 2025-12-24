@@ -31,6 +31,7 @@ exports.schema = EventManagement;
 
 // Create eventManagement
 exports.create = async function (event) {
+  console.log("create event called in meet mission: ", event);
   const data = new EventManagement({
     date: event.date,
     city: event.city,
@@ -377,7 +378,7 @@ exports.getEventCron = async function ({day, generated}) {
   const targetDateUTC = targetDate.toDate();
   const nextDayUTC = nextDay.toDate();
 
-  console.log('targetDate : ', targetDate, 'nextDay :', nextDay);
+  console.log('targetDate : ', targetDate.toString(), 'nextDay :', nextDay.toString());
 
   const matchStage = {
     date: {
@@ -562,7 +563,7 @@ exports.getEndEventCron = async function ({ generated }) {
   // const today = moment().tz('Europe/Berlin').startOf('day');
   // const testDay = today.clone().add(17, 'days').toDate(); // ✅ works
   // console.log(testDay, 'testDay');
-  
+
   const matchStage = {
     $and: [
       {

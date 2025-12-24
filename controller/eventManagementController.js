@@ -27,7 +27,7 @@ exports.get = async function (req, res) {
     if (barId) query['bars._id'] = barId;
 
     if (search) {
-      
+
     }
 
     const events = await event.get(query);
@@ -98,6 +98,7 @@ exports.getLocationNeedAttention = async function (req, res) {
  * event.create()
  */
 exports.create = async function (req, res) {
+
   const data = req.body;
 
   // Required field validation
@@ -117,7 +118,7 @@ exports.create = async function (req, res) {
         contentType: `image/${ext}`,
       });
       data.image = newImageName;
-      
+
       await event.create(data);
 
       return res.status(200).send({
@@ -161,23 +162,23 @@ exports.update = async function (req, res) {
     const image = data.image
     if(data.changeImage){
       const ext = path.extname(image).slice(1);
-      const newPreviewImage = `event-${Date.now()}.${ext}` 
-      
+      const newPreviewImage = `event-${Date.now()}.${ext}`
+
       const previewSignedUrl = await s3.signedURL({
         filename: `${newPreviewImage}`,
         acl: 'bucket-owner-full-control',
         contentType: `image/${ext}`,
       });
       data.image = newPreviewImage;
-    
+
       await event.update({ id: new mongoose.Types.ObjectId(id), data });
-    
-      return res.status(200).send({ 
+
+      return res.status(200).send({
 
         files_to_upload: [
         { name: image, url: previewSignedUrl }
         ],
-        message: 'Uploading the project files, please dont close this window yet.' 
+        message: 'Uploading the project files, please dont close this window yet.'
       });
     } else {
       delete data.image
@@ -187,21 +188,21 @@ exports.update = async function (req, res) {
     if(data.subject_email && data.body_email){
       const participants = await registeredParticipant.getRegistered({ event_id:  new mongoose.Types.ObjectId(id), isValid: true });
       if(participants.length){
-    
+
         for (const participant of participants){
           const participantData = participant;
           if(participantData) {
             const email = participantData.email
             const rex = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|'(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/
             if (rex.test(email.toLowerCase())){
-    
+
               await mail.send({
-              
+
                 to: email,
                 locale: 'de',
                 template: 'template',
                 subject: data.subject_email,
-                content: { 
+                content: {
                   body: `Hallo ${participantData.first_name},\n\n${data.body_email}`,
                   closing: 'Beste grüße,',
                   button: {
@@ -210,7 +211,7 @@ exports.update = async function (req, res) {
                   }
                 }
               })
-    
+
             }
           }
         }
@@ -380,7 +381,7 @@ exports.getTeamsByEventId = async function (req, res) {
   try {
     utility.validate(id);
     const teamData = await teams.get({ eventId: new mongoose.Types.ObjectId(id) });
-    
+
     const data = teamData?.map((team, i) => {
       return {
         ...team.toObject(),
@@ -432,7 +433,7 @@ exports.getEventChats = async (req, res) => {
     const result = matches.map(m => ({
       user_1: !m.user_1?.first_name ? m.user_1?.name : `${m.user_1?.first_name} ${m.user_1?.last_name}`,
       user_2: !m.user_2?.first_name ? m.user_2?.name : `${m.user_2?.first_name} ${m.user_2?.last_name}`,
-      last_message_by: m.last_message_by ? 
+      last_message_by: m.last_message_by ?
         (m.user_1?._id.toString() === m.last_message_by ? !m.user_1?.first_name ? m.user_1?.name : `${m.user_1?.first_name} ${m.user_1?.last_name}`
         : !m.user_2?.first_name ? m.user_2?.name : `${m.user_2?.first_name} ${m.user_2?.last_name}`) : '-',
       last_message_time: m.last_message_time || null,

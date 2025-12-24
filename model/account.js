@@ -20,7 +20,7 @@ exports.schema = Account;
 
 /*
 * account.create()
-* create a new account 
+* create a new account
 */
 
 exports.create = async function(account){
@@ -58,7 +58,7 @@ exports.get = async function(){
 
      }
   }]);
-  
+
   if (data.length){
     return data.map(a => {
 

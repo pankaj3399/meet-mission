@@ -65,7 +65,7 @@ export function EventGroups(props){
       <FetchEvents
         search={ search }
         setLoading={ x => setLoading(x) }
-        setData={ x => setEvents(x) }
+        setData={ x => { setEvents(x) } }
         reload={reload}
       />
 
@@ -226,7 +226,7 @@ function FetchEvents(props){
 
           return {
             ...dt,
-            city: dt.city.name,
+            city: dt.city?.name,
             num_bars: dt.bars?.length,
             date: formatter.format(new Date(dt.date)),
             capacity_percentage: dt.capacity_percentage ? `${dt.capacity_percentage}%` : '0%',

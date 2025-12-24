@@ -26,16 +26,61 @@ const UserSchema = new Schema({
 
 });
 
-const User = mongoose.model('User', UserSchema, 'user');
+// from meet-server... just for cron job testing purposes.
+const UserSchema2 = new Schema({
+
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String },
+  date_created: Date,
+  last_active: Date,
+  disabled: { type: Boolean },
+  support_enabled: { type: Boolean, required: true },
+  '2fa_enabled': { type: Boolean, required: true },
+  '2fa_secret': { type: String, required: false },
+  '2fa_backup_code': { type: String, required: false },
+  default_account: { type: String },
+  facebook_id: { type: String },
+  twitter_id: { type: String },
+  account: { type: Array },
+  push_token: { type: String },
+  avatar: { type: String },
+  dark_mode: { type: Boolean },
+  verified: { type: Boolean, required: true },
+  step: { type: Number, default: 1 },
+  onboarded: { type: Boolean, default: false },
+  first_name: { type: String },
+  last_name: { type: String },
+  gender: { type: String, enum: ['male', 'female', 'diverse'], default: null },
+  date_of_birth: { type: Date },
+  interests: [{ type: String }],
+  looking_for: { type: String },
+  profession: { type: String },
+  smoking_status: { type: Boolean, default: null },
+  description: { type: String },
+  images: [{ type: String }],
+  is_invited: { type: Boolean, default: null },
+  locale: { type: String, default: 'de' },
+  relationship_goal: { type: String, default: null },
+  children: { type: Boolean, default: null },
+  kind_of_person: { type: String, default: null },
+  feel_around_new_people: { type: String, default: null },
+  prefer_spending_time: { type: String, default: null },
+  describe_you_better: { type: String, default: null },
+  describe_role_in_relationship: { type: String, default: null },
+});
+
+const User = mongoose.model('User', UserSchema2, 'user');
 exports.schema = User;
 
 /*
 * user.create()
-* create a new user 
+* create a new user
 */
 
 exports.create = async function({ user, account }){
-  
+
   const data = {
 
     id: uuidv4(),
@@ -51,7 +96,7 @@ exports.create = async function({ user, account }){
     verified: user.verified
 
   }
-  
+
   // encrypt password
   if (user.password){
 
@@ -69,7 +114,7 @@ exports.create = async function({ user, account }){
     data.has_password = true;
 
   }
-  
+
   data.account_id = account;
   return data;
 
@@ -86,13 +131,13 @@ exports.get = async function({ id, email } = {}){
 
     ...id && { 'id': id },
     ...email && { 'email': email },
-    
+
   }).select({ _id: 0, __v: 0, password: 0, });
 
   if (data?.length){
     data.forEach(u => {
 
-      u.avatar = u.avatar ? 
+      u.avatar = u.avatar ?
         `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${u.avatar}` : null
 
     })

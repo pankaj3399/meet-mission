@@ -5,6 +5,10 @@ const moment = require('moment-timezone');
 const mongo = require('../model/mongo/mongo')
 const { generateTeamGroup, eventStartReminder, swipeEventStartReminder, eventEndReminder } = require('../controller/aiController');
 
+const { populateDatabase } = require('./populate-data');
+
+require('../helper/i18n').config();
+
 async function runAIJobForGrouping() {
   console.log('AI Grouping Start');
   try {
@@ -49,12 +53,16 @@ if (require.main === module) {
   (async () => {
     await mongo.connect();
 
-    await runAIJobForGrouping();
-    // await runAIJobForEventStartReminder();
-    // await runAIJobForSwipeEventStartReminder();
-    // await runAIJobForEndEventReminder();
+    await populateDatabase();
 
-    mongoose.connection.close();
-    process.exit(0);
+    setTimeout(async () => {
+      await runAIJobForGrouping();
+      await runAIJobForEventStartReminder();
+      await runAIJobForSwipeEventStartReminder();
+      await runAIJobForEndEventReminder();
+
+      mongoose.connection.close();
+      process.exit(0);
+    }, 3000);
   })();
 }

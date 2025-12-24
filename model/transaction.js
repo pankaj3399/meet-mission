@@ -183,7 +183,7 @@ exports.getParticipantsCron = async function ({ event_id }) {
 
   // 🔥 filter out transactions where participant and subparticipant are all null/empty
   data = data.filter(item => item.participant_id);
-    
+
   return data.map(item => {
     // choose the "sub participant": prefer sub_participant_id[0], else invited_user_id
     let sub = null;
